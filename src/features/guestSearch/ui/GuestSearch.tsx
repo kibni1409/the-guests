@@ -1,8 +1,7 @@
 import React from 'react';
-import { Input, Space, Typography } from 'antd';
+import { Input } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
-
-const { Text } = Typography;
+import styles from './GuestSearch.module.scss';
 
 interface GuestSearchProps {
     value: string;
@@ -11,16 +10,17 @@ interface GuestSearchProps {
 
 export const GuestSearch: React.FC<GuestSearchProps> = ({ value, onChange }) => {
     return (
-        <Space direction="vertical" size={8} style={{ width: '100%' }}>
-            <Text type="secondary">Поиск по имени</Text>
+        <label className={styles.field}>
+            <span className={styles.label}>Поиск</span>
             <Input
-                placeholder="Введите имя гостя..."
+                className={styles.control}
+                placeholder="Имя гостя"
                 prefix={<SearchOutlined />}
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
                 size="large"
                 allowClear
             />
-        </Space>
+        </label>
     );
 };

@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
-import { Card, Image, Modal, Tag, Typography } from 'antd';
+import { Image, Modal } from 'antd';
 import { ZoomInOutlined } from '@ant-design/icons';
 import type { Guest } from '../model/types';
 import { getGuestInitials } from '../../../shared/lib/guestInitials';
 import { useGuestPhoto } from '../../../shared/lib/useGuestPhoto';
 import styles from './GuestCard.module.scss';
 
-const { Text, Paragraph } = Typography;
-
 interface GuestCardProps {
     guest: Guest;
+    index?: number;
 }
 
 function GuestAvatar({
@@ -37,127 +36,119 @@ function GuestAvatar({
 
     return (
         <div className={`${className} ${styles.initialsAvatar}`} aria-label={guest.fullName}>
-            {getGuestInitials(guest.fullName)}
+            <span>{getGuestInitials(guest.fullName)}</span>
         </div>
     );
 }
 
-export const GuestCard: React.FC<GuestCardProps> = ({ guest }) => {
+export const GuestCard: React.FC<GuestCardProps> = ({ guest, index = 0 }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const { photoUrl, fullPhotoUrl, canPreviewPhoto, handleImageError } = useGuestPhoto(guest);
 
-    const cardStyle = {
-        '--guest-accent': guest.color,
-    } as React.CSSProperties;
-
-    const categoryStyle = {
-        backgroundColor: `${guest.color}20`,
-        color: guest.color,
-        border: `1px solid ${guest.color}`,
-    };
-
     return (
         <>
-            <Card
+            <article
                 className={styles.card}
-                style={cardStyle}
-                hoverable
+                style={{ '--guest-accent': guest.color, '--card-delay': `${index * 40}ms` } as React.CSSProperties}
                 onClick={() => setIsModalOpen(true)}
+                onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        setIsModalOpen(true);
+                    }
+                }}
+                role="button"
+                tabIndex={0}
+                aria-label={`Открыть карточку: ${guest.fullName}`}
             >
-                <div className={styles.cardHeader}>
+                <div className={styles.media}>
                     <GuestAvatar
                         guest={guest}
                         photoUrl={photoUrl}
-                        className={styles.avatar}
+                        className={styles.photo}
                         onError={handleImageError}
                     />
+                    <div className={styles.mediaShade} />
+                    {guest.category2 && (
+                        <span className={styles.roleBadge}>{guest.category2}</span>
+                    )}
                 </div>
 
-                <div className={styles.cardContent}>
+                <div className={styles.body}>
                     <h3 className={styles.name}>{guest.fullName}</h3>
-                    {guest.category2 && (
-                        <div className={styles.category} style={categoryStyle}>
-                            {guest.category2}
-                        </div>
-                    )}
                     {guest.shortDescription && (
-                        <Text className={styles.description}>{guest.shortDescription}</Text>
+                        <p className={styles.description}>{guest.shortDescription}</p>
                     )}
+                    <span className={styles.openHint}>Подробнее</span>
                 </div>
-            </Card>
+            </article>
 
             <Modal
                 title={null}
                 open={isModalOpen}
                 onCancel={() => setIsModalOpen(false)}
                 footer={null}
-                width="min(560px, calc(100vw - 32px))"
+                width="min(540px, calc(100vw - 28px))"
                 className={styles.modal}
                 centered
                 destroyOnHidden
             >
-                <div className={styles.modalHero}>
-                    {canPreviewPhoto && photoUrl ? (
-                        <div className={styles.modalPhotoWrapper}>
-                            <Image
-                                src={photoUrl}
-                                alt={guest.fullName}
+                <div
+                    className={styles.modalInner}
+                    style={{ '--guest-accent': guest.color } as React.CSSProperties}
+                >
+                    <div className={styles.modalHero}>
+                        {canPreviewPhoto && photoUrl ? (
+                            <div className={styles.modalPhotoWrapper}>
+                                <Image
+                                    src={photoUrl}
+                                    alt={guest.fullName}
+                                    className={styles.modalPhoto}
+                                    rootClassName={styles.modalPhotoRoot}
+                                    preview={{
+                                        src: fullPhotoUrl ?? photoUrl,
+                                        mask: (
+                                            <span className={styles.previewMask}>
+                                                <ZoomInOutlined />
+                                                Увеличить
+                                            </span>
+                                        ),
+                                    }}
+                                    onError={handleImageError}
+                                />
+                            </div>
+                        ) : (
+                            <GuestAvatar
+                                guest={guest}
+                                photoUrl={photoUrl}
                                 className={styles.modalPhoto}
-                                rootClassName={styles.modalPhotoRoot}
-                                preview={{
-                                    src: fullPhotoUrl ?? photoUrl,
-                                    mask: (
-                                        <span className={styles.previewMask}>
-                                            <ZoomInOutlined />
-                                            Увеличить
-                                        </span>
-                                    ),
-                                }}
                                 onError={handleImageError}
                             />
-                            <span className={styles.photoHint}>Нажмите, чтобы увеличить</span>
-                        </div>
-                    ) : (
-                        <GuestAvatar
-                            guest={guest}
-                            photoUrl={photoUrl}
-                            className={styles.modalPhoto}
-                            onError={handleImageError}
-                        />
-                    )}
-                </div>
-
-                <div className={styles.modalBody}>
-                    <h2 className={styles.modalName}>{guest.fullName}</h2>
-
-                    <div className={styles.modalTags}>
-                        {guest.category1 && (
-                            <Tag color={guest.color} className={styles.modalTag}>
-                                {guest.category1}
-                            </Tag>
-                        )}
-                        {guest.category2 && (
-                            <Tag className={styles.modalTag}>{guest.category2}</Tag>
                         )}
                     </div>
 
-                    {guest.shortDescription && (
-                        <Paragraph className={styles.modalDescription}>
-                            <strong>Кратко:</strong> {guest.shortDescription}
-                        </Paragraph>
-                    )}
+                    <div className={styles.modalBody}>
+                        <p className={styles.modalEyebrow}>{guest.category1}</p>
+                        <h2 className={styles.modalName}>{guest.fullName}</h2>
 
-                    {guest.fullDescription && (
-                        <Paragraph className={styles.modalDescription}>
-                            <strong>Подробнее:</strong> {guest.fullDescription}
-                        </Paragraph>
-                    )}
+                        {guest.category2 && (
+                            <div className={styles.modalTags}>
+                                <span className={styles.modalTag}>{guest.category2}</span>
+                            </div>
+                        )}
 
-                    {guest.specialNotes && (
-                        <Paragraph className={`${styles.modalDescription} ${styles.modalNotes}`}>
-                            <strong>Особые отметки:</strong> {guest.specialNotes}
-                        </Paragraph>
-                    )}
+                        {guest.shortDescription && (
+                            <p className={styles.modalLead}>{guest.shortDescription}</p>
+                        )}
+
+                        {guest.fullDescription && (
+                            <p className={styles.modalText}>{guest.fullDescription}</p>
+                        )}
+
+                        {guest.specialNotes && (
+                            <p className={styles.modalNotes}>{guest.specialNotes}</p>
+                        )}
+                    </div>
                 </div>
             </Modal>
         </>

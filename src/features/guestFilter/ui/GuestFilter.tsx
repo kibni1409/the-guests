@@ -1,7 +1,6 @@
 import React from 'react';
-import { Select, Space, Typography } from 'antd';
-
-const { Text } = Typography;
+import { Select } from 'antd';
+import styles from './GuestFilter.module.scss';
 
 interface GuestFilterProps {
     categories: string[];
@@ -20,18 +19,18 @@ export const GuestFilter: React.FC<GuestFilterProps> = ({
     ];
 
     return (
-        <Space direction="vertical" size={8} style={{ width: '100%' }}>
-            <Text type="secondary">Фильтр по категориям</Text>
+        <label className={styles.field}>
+            <span className={styles.label}>Категория</span>
             <Select
+                className={styles.control}
                 options={options}
                 value={selectedCategory || 'all'}
                 onChange={(value) => onCategoryChange(value === 'all' ? null : value)}
                 size="large"
-                style={{ width: '100%' }}
                 showSearch
                 optionFilterProp="label"
                 placeholder="Выберите категорию"
             />
-        </Space>
+        </label>
     );
 };
