@@ -7,7 +7,7 @@ export const GUESTS: Guest[] = [
         id: 1,
         fullName: 'Андрей',
         photo: photo('Андрей.jpg'),
-        category1: 'Жених/Невеста',
+        category1: 'Молодожены',
         category2: 'Жених',
         color: '#C4A35A',
         shortDescription: 'Разработчик, любит PS5',
@@ -18,7 +18,7 @@ export const GUESTS: Guest[] = [
         id: 2,
         fullName: 'Вероника',
         photo: photo('Вероника.jpg'),
-        category1: 'Жених/Невеста',
+        category1: 'Молодожены',
         category2: 'Невеста',
         color: '#C4A35A',
         shortDescription: 'Любит Гарри Поттера и аниме',
@@ -28,7 +28,7 @@ export const GUESTS: Guest[] = [
     {
         id: 3,
         fullName: 'Усков Олег Юрьевич',
-        photo: '',
+        photo: photo('Олег.jpg'),
         category1: 'Со стороны невесты',
         category2: 'Родители',
         color: '#7A6B8A',
@@ -39,7 +39,7 @@ export const GUESTS: Guest[] = [
     {
         id: 4,
         fullName: 'Ускова Оксана Анатольевна',
-        photo: '',
+        photo: photo('Оксана.jpg'),
         category1: 'Со стороны невесты',
         category2: 'Родители',
         color: '#7A6B8A',
@@ -50,7 +50,7 @@ export const GUESTS: Guest[] = [
     {
         id: 5,
         fullName: 'Тротно Эвелина',
-        photo: '',
+        photo: photo('Эвелина.jpg'),
         category1: 'Со стороны невесты',
         category2: 'Двоюродные',
         color: '#7A6B8A',
@@ -202,6 +202,17 @@ export const GUESTS: Guest[] = [
         color: '#5B7A68',
         shortDescription: 'Брат-близнец Влада от другой мамы',
         fullDescription: 'Поднимал кофейный бизнес Уфы. Кличка «Анимешник».',
+    },
+    {
+        id: 20,
+        fullName: 'Спутница Александра — Дарья',
+        photo: photo('Дарья.jpg'),
+        category1: 'Со стороны жениха',
+        category2: 'Подруги',
+        color: '#5B7A68',
+        shortDescription: 'На работе её парень — начальник, дома они меняются местами',
+        fullDescription:
+            'Не может решить, что любит больше — сладкое или своего Александра. Предпочитает леопардовые вещи не из‑за моды, а из‑за характера.',
     },
     {
         id: 21,
