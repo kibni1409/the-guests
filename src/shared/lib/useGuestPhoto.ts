@@ -1,50 +1,21 @@
 import { useEffect, useState } from 'react';
 import type { Guest } from '../../entities/guest/model/types';
-import { canPreviewGuestPhoto, resolveGuestPhoto } from './guestPhoto';
+import { canPreviewGuestPhoto, getGuestPhotoUrl } from './guestPhoto';
 
 export function useGuestPhoto(guest: Guest) {
-    const [photoUrl, setPhotoUrl] = useState<string | null>(null);
-    const [fullPhotoUrl, setFullPhotoUrl] = useState<string | null>(null);
-    const [isRealPhoto, setIsRealPhoto] = useState(false);
+    const [failed, setFailed] = useState(false);
+    const resolvedUrl = getGuestPhotoUrl(guest);
 
     useEffect(() => {
-        let cancelled = false;
+        setFailed(false);
+    }, [guest.id, guest.photo]);
 
-        setPhotoUrl(null);
-        setFullPhotoUrl(null);
-        setIsRealPhoto(false);
-
-        resolveGuestPhoto(guest)
-            .then((resolved) => {
-                if (!cancelled) {
-                    setPhotoUrl(resolved.displayUrl);
-                    setFullPhotoUrl(resolved.fullUrl);
-                    setIsRealPhoto(resolved.isRealPhoto);
-                }
-            })
-            .catch(() => {
-                if (!cancelled) {
-                    setPhotoUrl(null);
-                    setFullPhotoUrl(null);
-                    setIsRealPhoto(false);
-                }
-            });
-
-        return () => {
-            cancelled = true;
-        };
-    }, [guest.id, guest.photo, guest.fullName, guest.color]);
-
-    const handleImageError = () => {
-        setPhotoUrl(null);
-        setFullPhotoUrl(null);
-        setIsRealPhoto(false);
-    };
+    const photoUrl = failed ? null : resolvedUrl;
 
     return {
         photoUrl,
-        fullPhotoUrl,
-        canPreviewPhoto: canPreviewGuestPhoto(isRealPhoto, fullPhotoUrl),
-        handleImageError,
+        fullPhotoUrl: photoUrl,
+        canPreviewPhoto: canPreviewGuestPhoto(photoUrl),
+        handleImageError: () => setFailed(true),
     };
 }
